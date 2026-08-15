@@ -1,0 +1,71 @@
+version: "1.0"
+name: omega9-entitlements
+owner: sophia-key
+
+plans:
+  free:
+    status: active
+    monthly_platform_credit_usd: 2.00
+    daily_requests: 20
+    max_request_cost_usd: 0.10
+    overage: deny
+    providers:
+      openai: limited
+      anthropic: disabled
+      google-gemini: limited
+      backengine-mcp: disabled
+  starter:
+    status: active
+    monthly_platform_credit_usd: 10.00
+    daily_requests: 200
+    max_request_cost_usd: 0.50
+    overage: paid
+    providers:
+      openai: allowed
+      anthropic: allowed
+      google-gemini: allowed
+      backengine-mcp: allowed
+  pro:
+    status: active
+    monthly_platform_credit_usd: 50.00
+    daily_requests: 2000
+    max_request_cost_usd: 2.00
+    overage: paid
+    providers:
+      openai: allowed
+      anthropic: allowed
+      google-gemini: allowed
+      backengine-mcp: allowed
+  business:
+    status: active
+    monthly_platform_credit_usd: 250.00
+    daily_requests: 10000
+    max_request_cost_usd: 10.00
+    overage: paid
+    providers:
+      openai: allowed
+      anthropic: allowed
+      google-gemini: allowed
+      backengine-mcp: allowed
+  enterprise:
+    status: contract
+    monthly_platform_credit_usd: 0
+    daily_requests: custom
+    max_request_cost_usd: custom
+    overage: contract
+    providers:
+      openai: policy
+      anthropic: policy
+      google-gemini: policy
+      backengine-mcp: policy
+
+rules:
+  identity_required: true
+  active_subscription_required: true
+  provider_access_requires_entitlement: true
+  free_access_is_platform_funded: true
+  customer_never_receives_provider_credentials: true
+  quota_exhaustion: require_upgrade_or_paid_overage
+  suspended_account: deny_all_paid_capabilities
+  audit_every_authorization_decision: true
+  audit_every_meter_event: true
