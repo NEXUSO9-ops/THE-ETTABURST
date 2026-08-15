@@ -1,0 +1,53 @@
+version: "1.0"
+name: omega9-metering-contract
+owner: nexus
+
+meter:
+  unit: usd
+  source_of_truth: provider_usage_plus_platform_cost
+  customer_charge_basis: entitlement_and_plan
+  required_dimensions:
+    - request_id
+    - tenant_id
+    - user_id
+    - plan_id
+    - provider
+    - model
+    - capability
+    - input_units
+    - output_units
+    - provider_cost_usd
+    - customer_charge_usd
+    - platform_credit_used_usd
+    - timestamp
+    - authorization_decision_id
+
+calculation:
+  provider_cost: input_cost + output_cost + provider_tool_cost
+  platform_cost: infrastructure_cost + gateway_cost + observability_cost
+  gross_margin: customer_charge_usd - provider_cost - platform_cost
+  remaining_credit: plan_credit_usd - cumulative_platform_credit_used_usd
+
+authorization:
+  preflight_required: true
+  reject_when:
+    - identity_invalid
+    - subscription_inactive
+    - entitlement_missing
+    - quota_exhausted_and_overage_disabled
+    - policy_denied
+    - provider_disabled
+  approval_owner: sophia-key
+
+security:
+  provider_credentials_server_side_only: true
+  tenant_isolation_required: true
+  immutable_audit_event_required: true
+  provenance_required: true
+  sensitive_data_redaction_before_meter_log: true
+
+failure_modes:
+  insufficient_credit: upgrade_required
+  provider_unavailable: fail_closed
+  meter_unavailable: deny_execution
+  audit_unavailable: deny_execution
