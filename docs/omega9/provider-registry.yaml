@@ -1,0 +1,54 @@
+version: "1.0"
+name: omega9-provider-registry
+owner: sophia-key
+control_plane: nexus
+
+defaults:
+  customer_api_keys_exposed: false
+  provider_credentials_client_visible: false
+  require_identity: true
+  require_entitlement: true
+  require_metering: true
+  require_audit_event: true
+  require_policy_decision: true
+
+providers:
+  openai:
+    enabled: true
+    class: llm
+    credential_owner: omega9
+    customer_billing: omega9
+    routing_mode: policy_gated
+    free_tier_default: false
+  anthropic:
+    enabled: true
+    class: llm
+    credential_owner: omega9
+    customer_billing: omega9
+    routing_mode: policy_gated
+    free_tier_default: false
+  google-gemini:
+    enabled: true
+    class: llm
+    credential_owner: omega9
+    customer_billing: omega9
+    routing_mode: policy_gated
+    free_tier_default: false
+  backengine-mcp:
+    enabled: true
+    class: mcp
+    registry_id: ai.backengine/backengine-mcp
+    requested_version: "8.1.1"
+    credential_owner: omega9
+    customer_billing: omega9
+    routing_mode: policy_gated
+    free_tier_default: false
+
+controls:
+  provider_selection: sophia_policy
+  credential_isolation: true
+  tenant_isolation: true
+  provenance_required: true
+  destructive_tools_require_step_up: true
+  quota_exhaustion_action: deny_and_upgrade
+  provider_failure_action: fail_closed_for_paid_tools
